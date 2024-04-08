@@ -1,5 +1,6 @@
 from fastapi import FastAPI
-from app.routes.user import user
+from fastapi.security import OAuth2PasswordBearer
+from app.routes import user, auth
 from app.config import models
 from app.config.db import engine, SessionLocal
 from fastapi.middleware.cors import CORSMiddleware
@@ -9,7 +10,9 @@ from fastapi.staticfiles import StaticFiles
 models.Base.metadata.create_all(bind=engine)
 
 app= FastAPI()
-app.include_router(user)
+
+app.include_router(user.user)
+app.include_router(auth.auth)
 
 origins = [
   'http://localhost:3000',
