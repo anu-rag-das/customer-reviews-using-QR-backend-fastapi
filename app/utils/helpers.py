@@ -5,8 +5,8 @@ from fastapi.security import OAuth2PasswordBearer
 from app.config.db import SessionLocal
 from sqlalchemy.orm import Session
 from app.config.enums import RoleType
-from app.config.models import Roles, Users
-from app.config.schemas import TokenData, User
+from app.config.models import Businesses, Reviews, Roles, Users
+from app.config.schemas import Business, ReviewSchema, TokenData, User
 from passlib.context import CryptContext
 from jose import JWTError, jwt
 import os
@@ -84,3 +84,59 @@ async def get_current_user(token: Annotated[str, Depends(oauth2_scheme)]):
     if user is None:
         raise credentials_exception
     return user
+
+
+def create_business(business: Business, user: User, db: Session):
+    latitude, longitude = map(float, business.location.split(','))
+    new_business = Businesses(
+        name=business.name,
+        description=business.description,
+        latitude=latitude, 
+        longitude=longitude,
+        website=business.website
+    )
+
+    user = db.merge(user)
+    user.businesses.append(new_business)
+    db.add(user)
+    db.commit()
+    db.refresh(user)
+    
+    return business
+
+
+def send_ok_response(response, message):
+    return {
+        "data":{
+            "response":response
+        },
+        "status":"Success",
+        "status_code": 200,
+        "message":message
+    }
+
+def store_review(review: ReviewSchema, db : Session):
+    business = db.query(Businesses).filter(Businesses.id==review.business_id).first()
+    if not business:
+        raise HTTPException(status_code=404, detail="Business not found.")
+    
+    business.reviews.append(
+        Reviews(
+        email = review.email,
+        cleanliness = review.cleanliness,
+        communication = review.communication,
+        location = review.location,
+        accuracy = review.accuracy,
+        value_for_money = review.value_for_money,
+        comments = review.comments
+        )
+    )
+
+    db.add(business)
+    db.commit()
+    
+    return {
+        "status_code": 200,
+        "status": "Success",
+        "message": "Added review successfully"
+    }

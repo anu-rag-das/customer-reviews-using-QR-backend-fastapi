@@ -1,9 +1,7 @@
 from datetime import datetime
-from xmlrpc.client import Boolean
-from sqlalchemy import BigInteger, Column, DateTime, ForeignKey, String, Integer
+from sqlalchemy import BigInteger, Column, DateTime, ForeignKey, String, Integer, Float, BOOLEAN
 from app.config.db import Base
 from sqlalchemy.orm import relationship
-from geoalchemy2 import Geometry
 
 class Users(Base):
     __tablename__ = "users"
@@ -16,7 +14,7 @@ class Users(Base):
     password = Column(String(255), nullable=False)
     #relationships
     roles = relationship("Roles", secondary="role_user", back_populates="users")
-    businesses = relationship("Businesses", secondary="business_user", back_populates="users")
+    businesses = relationship("Businesses", back_populates="users")
 
 class RoleUser(Base):
     __tablename__ = "role_user"
@@ -36,17 +34,31 @@ class Businesses(Base):
     __tablename__ = "businesses"
 
     id = Column(BigInteger, primary_key=True, index=True, autoincrement=True)
+    user_id = Column(BigInteger, ForeignKey("users.id"))
     name = Column(String(255), nullable=False)
     description = Column(String(255), nullable=False)
-    location = Column(Geometry(geometry_type='POINT', srid=4326), nullable=False)
+    latitude = Column(Float, nullable=False)
+    longitude = Column(Float, nullable=False) 
     website = Column(String(255))
     created_at = Column(DateTime, default=datetime.now, nullable=False)
     updated_at = Column(DateTime, default=datetime.now, onupdate=datetime.now, nullable=False)
     #relationships
-    users = relationship("Users",secondary="business_user", back_populates="businesses")
+    users = relationship("Users", back_populates="businesses")
+    reviews = relationship("Reviews", back_populates="business")
 
-class BusinessUser(Base):
-    __tablename__ = "business_user"
+class Reviews(Base):
+    __tablename__ = "reviews"
 
-    user_id = Column(BigInteger, ForeignKey("users.id"), primary_key=True)
-    business_id = Column(BigInteger, ForeignKey("businesses.id"), primary_key=True)
+    id = Column(BigInteger, primary_key=True, index=True, autoincrement=True)
+    email = Column(String(255), nullable=False)
+    business_id = Column(BigInteger, ForeignKey("businesses.id"), nullable=False)
+    cleanliness = Column(Float, nullable=True)
+    communication = Column(Float, nullable=True)
+    location = Column(Float, nullable=True)
+    accuracy = Column(Float, nullable=True)
+    value_for_money = Column(BOOLEAN, nullable=True)
+    comments = Column(String(255))
+    created_at = Column(DateTime, default=datetime.now, nullable=False)
+    updated_at = Column(DateTime, default=datetime.now, onupdate=datetime.now, nullable=False)
+    # Relationships
+    business = relationship("Businesses", back_populates="reviews", uselist=False)

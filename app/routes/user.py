@@ -11,9 +11,9 @@ user = APIRouter(tags=["user"])
 @user.post("/users/", response_model=UserOut)
 def add_user(user: User, db: Session = Depends(get_db)):
     if get_user_by_email(db, email=user.email):
-        raise HTTPException(status_code=200, detail="Email already registered")
+        raise HTTPException(status_code=400, detail="Email already registered")
     elif get_user(db, username=user.username):
-        raise HTTPException(status_code=200, detail="Username is already taken")
+        raise HTTPException(status_code=400, detail="Username is already taken")
     return create_user(db=db, user=user)
 
 @user.get("/users/me/", response_model=UserOut)

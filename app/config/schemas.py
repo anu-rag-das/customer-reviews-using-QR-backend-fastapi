@@ -71,3 +71,21 @@ class UserOut(BaseModel):
     name:str
     gender:int
     email:EmailStr
+
+
+class ReviewSchema(BaseModel):
+    email : EmailStr
+    business_id : int
+    cleanliness : float
+    communication : float
+    location : float
+    accuracy : float
+    value_for_money : bool
+    comments : str
+    location: str
+
+    @validator('location')
+    def validate_location_format(cls, value):
+        if not re.match(r"^-?\d+(\.\d+)?,-?\d+(\.\d+)?$", value):
+            raise ValueError('Invalid location format. It should be in the form of "latitude,longitude".')
+        return value
