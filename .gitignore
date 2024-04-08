@@ -1,0 +1,5 @@
+.env
+/app/__pycache__
+/app/config/__pycache__
+/app/routes/__pycache__
+/app/utils/__pycache__
