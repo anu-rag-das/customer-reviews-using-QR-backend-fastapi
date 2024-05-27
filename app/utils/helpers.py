@@ -107,10 +107,8 @@ def create_business(business: Business, user: User, db: Session):
 
 def send_ok_response(response, message):
     return {
-        "data":{
-            "response":response
-        },
-        "status":"Success",
+        "data":response,
+        "success":True,
         "status_code": 200,
         "message":message
     }

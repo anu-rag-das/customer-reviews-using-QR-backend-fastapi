@@ -1,10 +1,10 @@
 import re
 from fastapi import HTTPException
-from pydantic import BaseModel, EmailStr, validator
+from pydantic import BaseModel, EmailStr, validator, constr
 from app.config.enums import GenderType
 
 class User(BaseModel):
-    username:str
+    username:constr(min_length=5)
     name:str
     gender:int
     email:EmailStr
