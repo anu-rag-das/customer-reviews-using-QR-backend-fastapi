@@ -16,7 +16,9 @@ def get_business_of_current_user(current_user: Annotated[User, Depends(get_curre
     response = [
         {
             "id": business.id,
-            "name": business.name
+            "name": business.name,
+            "description": business.description,
+            "website" : business.website
         }
         for business in current_user.businesses
     ]
