@@ -16,8 +16,8 @@ passlib = ">=1.7.4"
 python-jose = ">=3.3.0"
 python-multipart = ">=0.0.9"
 shapely = ">=2.0.3"
-pydantic = {extras = ["email"], version = ">=2.6.3"}
 cryptography = ">=42.0.5"
+pydantic = {extras = ["email"], version = ">=2.6.3"}
 
 [dev-packages]
 
