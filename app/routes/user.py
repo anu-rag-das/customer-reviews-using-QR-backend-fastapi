@@ -1,9 +1,10 @@
 from typing import Annotated
 from fastapi import APIRouter
-from app.config.schemas import User, UserOut
+from app.config.schemas import User, UserOut, UserUpdate
 from fastapi import Depends, HTTPException
 from sqlalchemy.orm import Session
-from app.utils.helpers import get_current_user, get_db, get_user, get_user_by_email, create_user, send_ok_response
+from app.utils.helpers import get_current_user, get_db, get_user, get_user_by_email, create_user, send_ok_response, update_user_details
+from fastapi.encoders import jsonable_encoder
 
 
 user = APIRouter(tags=["user"])
@@ -22,3 +23,9 @@ async def read_users_me(
     current_user: Annotated[User, Depends(get_current_user)],
 ):
     return send_ok_response(response = current_user, message= "Fetched current user")
+
+@user.put("/users/update/")
+async def update_user(user: UserUpdate, current_user: Annotated[User, Depends(get_current_user)]):
+    response = update_user_details(current_user=current_user, data=jsonable_encoder(user))
+    return send_ok_response(response=response, message="User updated successfully")
+    

@@ -34,6 +34,11 @@ def create_user(db: Session, user: User):
     db.refresh(db_user)
     return db_user
 
+def update_user_details(current_user: User, data: dict):
+    current_user.name = data.get('name')
+    current_user.username = data.get('username')
+    current_user.gender = data.get('gender')
+    return current_user
 
 def get_password_hash(password):
     return pwd_context.hash(password)

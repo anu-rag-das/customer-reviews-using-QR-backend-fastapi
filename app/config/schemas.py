@@ -28,6 +28,23 @@ class User(BaseModel):
             raise HTTPException(status_code=400,detail='password must be at least 8 characters long and contain at least one uppercase letter, one lowercase letter, one digit, and one special character.')
         return value
 
+class UserUpdate(BaseModel):
+    username:constr(min_length=5) = None
+    name:str = None
+    gender:int = None
+
+    @field_validator("username")
+    def validate_name(cls, value):
+        if not re.match(r"^[a-zA-Z0-9]+$", value.strip()):
+            raise HTTPException(status_code=400,detail="username can only contain alphabets and digits without any space.")
+        return value
+
+    @field_validator("gender")
+    def validate_gender(cls, value):
+        if value not in [gender.value for gender in GenderType]:
+            raise HTTPException(status_code=400,detail="Invalid gender.")
+        return value
+    
 
 class Business(BaseModel):
     name: str
