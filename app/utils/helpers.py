@@ -34,10 +34,14 @@ def create_user(db: Session, user: User):
     db.refresh(db_user)
     return db_user
 
-def update_user_details(current_user: User, data: dict):
-    current_user.name = data.get('name')
-    current_user.username = data.get('username')
-    current_user.gender = data.get('gender')
+def update_user_details(db: Session, current_user: User, data: dict):
+    for key, value in data.items():
+        setattr(current_user, key, value)
+    try:
+        db.add(current_user)
+    except:
+        db.add(db.merge(current_user))
+    db.commit()
     return current_user
 
 def get_password_hash(password):

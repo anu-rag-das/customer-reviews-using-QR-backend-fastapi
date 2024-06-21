@@ -25,7 +25,7 @@ async def read_users_me(
     return send_ok_response(response = current_user, message= "Fetched current user")
 
 @user.put("/users/update/")
-async def update_user(user: UserUpdate, current_user: Annotated[User, Depends(get_current_user)]):
-    response = update_user_details(current_user=current_user, data=jsonable_encoder(user))
+async def update_user(user: UserUpdate, current_user: Annotated[User, Depends(get_current_user)], db: Session = Depends(get_db)):
+    response = update_user_details(db=db, current_user=current_user, data=jsonable_encoder(user))
     return send_ok_response(response=response, message="User updated successfully")
     
