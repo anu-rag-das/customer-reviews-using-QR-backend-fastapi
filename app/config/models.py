@@ -1,5 +1,5 @@
 from datetime import datetime
-from sqlalchemy import BigInteger, Column, DateTime, ForeignKey, String, Integer, Float, BOOLEAN
+from sqlalchemy import BigInteger, Column, DateTime, ForeignKey, String, Integer, Float, BOOLEAN, Text
 from app.config.db import Base
 from sqlalchemy.orm import relationship
 
@@ -36,7 +36,7 @@ class Businesses(Base):
     id = Column(BigInteger, primary_key=True, index=True, autoincrement=True)
     user_id = Column(BigInteger, ForeignKey("users.id"))
     name = Column(String(255), nullable=False)
-    description = Column(String(255), nullable=False)
+    description = Column(Text, nullable=False)
     latitude = Column(Float, nullable=False)
     longitude = Column(Float, nullable=False) 
     website = Column(String(255))
@@ -56,7 +56,7 @@ class Reviews(Base):
     location = Column(Float, nullable=True)
     accuracy = Column(Float, nullable=True)
     value_for_money = Column(BOOLEAN, nullable=True)
-    comments = Column(String(255))
+    comments = Column(Text)
     created_at = Column(DateTime, default=datetime.now, nullable=False)
     updated_at = Column(DateTime, default=datetime.now, onupdate=datetime.now, nullable=False)
     # Relationships
