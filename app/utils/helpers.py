@@ -131,7 +131,6 @@ def store_review(review: ReviewSchema, db : Session):
     
     business.reviews.append(
         Reviews(
-        email = review.email,
         cleanliness = review.cleanliness,
         communication = review.communication,
         location = review.location,
@@ -165,3 +164,15 @@ def update_business_details(db: Session, business_id: int, data: dict):
         db.add(db.merge(business))
     db.commit()
     return business
+
+
+def change_user_password(passwords : dict, current_user: User, db: Session):
+    if not verify_password(plain_password=passwords.get('old_password'), hashed_password=current_user.password):
+        raise HTTPException(status_code=400, detail="Old and new passwords do not match")
+    current_user.password = get_password_hash(password=passwords.get('new_password'))
+    try:
+        db.add(current_user)
+    except:
+        db.add(db.merge(current_user))
+    db.commit()
+    return current_user
