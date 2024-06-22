@@ -1,6 +1,7 @@
 from datetime import datetime, timedelta, timezone
 from typing import Annotated
 from fastapi import Depends, HTTPException
+from fastapi.encoders import jsonable_encoder
 from fastapi.security import OAuth2PasswordBearer
 from app.config.db import SessionLocal
 from sqlalchemy.orm import Session
@@ -36,7 +37,8 @@ def create_user(db: Session, user: User):
 
 def update_user_details(db: Session, current_user: User, data: dict):
     for key, value in data.items():
-        setattr(current_user, key, value)
+        if value is not None:
+            setattr(current_user, key, value)
     try:
         db.add(current_user)
     except:
@@ -123,7 +125,7 @@ def send_ok_response(response, message):
     }
 
 def store_review(review: ReviewSchema, db : Session):
-    business = db.query(Businesses).filter(Businesses.id==review.business_id).first()
+    business = db.query(Businesses).get(review.business_id)
     if not business:
         raise HTTPException(status_code=404, detail="Business not found.")
     
@@ -147,3 +149,19 @@ def store_review(review: ReviewSchema, db : Session):
         "status": "Success",
         "message": "Added review successfully"
     }
+    
+def update_business_details(db: Session, business_id: int, data: dict):
+    business = db.query(Businesses).get(business_id)
+    for key, value in data.items():
+        if value is not None:
+            if key == 'location':
+                latitude, longitude = map(float, data.get(key).split(','))
+                business.latitude = latitude
+                business.longitude = longitude
+            setattr(business, key, value)
+    try:
+        db.add(business)
+    except:
+        db.add(db.merge(business))
+    db.commit()
+    return business

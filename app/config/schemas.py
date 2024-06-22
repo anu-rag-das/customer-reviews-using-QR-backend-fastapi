@@ -1,7 +1,7 @@
 import re
 from fastapi import HTTPException
-from pydantic import BaseModel, EmailStr, constr, field_validator
-from app.config.enums import GenderType
+from pydantic import BaseModel, EmailStr, constr, confloat, field_validator
+from .enums import GenderType
 
 class User(BaseModel):
     username:constr(min_length=5)
@@ -91,16 +91,20 @@ class UserOut(BaseModel):
 
 
 class ReviewSchema(BaseModel):
-    email : EmailStr
     business_id : int
-    cleanliness : float
-    communication : float
-    location : float
-    accuracy : float
+    cleanliness : confloat(ge=0.0, le=5.0)
+    communication : confloat(ge=0.0, le=5.0)
+    location : confloat(ge=0.0, le=5.0)
+    accuracy : confloat(ge=0.0, le=5.0)
     value_for_money : bool
     comments : str
-    location: str
 
+class BusinessUpdate(BaseModel):
+    name: str = None
+    location: str = None
+    description: str = None
+    website: str = None
+    
     @field_validator('location')
     def validate_location_format(cls, value):
         if not re.match(r"^-?\d+(\.\d+)?,-?\d+(\.\d+)?$", value):
