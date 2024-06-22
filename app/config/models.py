@@ -50,7 +50,6 @@ class Reviews(Base):
     __tablename__ = "reviews"
 
     id = Column(BigInteger, primary_key=True, index=True, autoincrement=True)
-    email = Column(String(255), nullable=False)
     business_id = Column(BigInteger, ForeignKey("businesses.id"), nullable=False)
     cleanliness = Column(Float, nullable=True)
     communication = Column(Float, nullable=True)
