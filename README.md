@@ -17,12 +17,14 @@ git clone [repository url](https://github.com/anu-rag-das/customer-reviews-using
 
 2. Create a virtual environment (optional)
 3. Activate the virtual environment
-4. Install the required dependencies using `requirements.txt`:
+4. Install the required dependencies using `requirements.txt`
 
 ## Usage
-1. Run the FastAPI server:
+1. Populate the roles table:
+INSERT INTO roles(name) VALUES ("SUPER_ADMIN"),("ADMIN"), ("CUSTOMER");
+2. Run the FastAPI server:
 uvicorn app.main:app --reload
-2. Access the web application by navigating to `http://localhost:8000` in your web browser.
+3. Access the web application by navigating to `http://localhost:8000` in your web browser.
 
 ## Acknowledgements
 - This project utilizes the FastAPI framework.
