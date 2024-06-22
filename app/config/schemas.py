@@ -110,3 +110,13 @@ class BusinessUpdate(BaseModel):
         if not re.match(r"^-?\d+(\.\d+)?,-?\d+(\.\d+)?$", value):
             raise ValueError('Invalid location format. It should be in the form of "latitude,longitude".')
         return value
+    
+class ChangePassword(BaseModel):
+    old_password: str
+    new_password: str
+    
+    @field_validator("new_password")
+    def validate_password_strength(cls, value):
+        if not re.match(r"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+}{'\":;?/><,.\\-]).{8,}$", value):
+            raise HTTPException(status_code=400,detail='password must be at least 8 characters long and contain at least one uppercase letter, one lowercase letter, one digit, and one special character.')
+        return value

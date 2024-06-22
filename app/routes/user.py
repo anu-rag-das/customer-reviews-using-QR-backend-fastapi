@@ -1,9 +1,9 @@
 from typing import Annotated
 from fastapi import APIRouter
-from app.config.schemas import User, UserOut, UserUpdate
+from app.config.schemas import User, UserOut, UserUpdate, ChangePassword
 from fastapi import Depends, HTTPException
 from sqlalchemy.orm import Session
-from app.utils.helpers import get_current_user, get_db, get_user, get_user_by_email, create_user, send_ok_response, update_user_details
+from app.utils.helpers import get_current_user, get_db, get_user, get_user_by_email, create_user, send_ok_response, update_user_details, change_user_password
 from fastapi.encoders import jsonable_encoder
 
 
@@ -28,4 +28,8 @@ async def read_users_me(
 async def update_user(user: UserUpdate, current_user: Annotated[User, Depends(get_current_user)], db: Session = Depends(get_db)):
     response = update_user_details(db=db, current_user=current_user, data=jsonable_encoder(user))
     return send_ok_response(response=response, message="User updated successfully")
-    
+
+@user.put("/users/change-password/")
+async def change_password(passwords: ChangePassword, current_user: Annotated[User, Depends(get_current_user)], db: Session = Depends(get_db)):
+    response = change_user_password(passwords = jsonable_encoder(passwords), current_user= current_user, db=db)
+    return send_ok_response(response=response, message="Change password successfully")
